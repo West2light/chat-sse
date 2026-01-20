@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-// Use local proxy to avoid CORS issues
-const isDev = process.env.NODE_ENV === 'development'
-const baseURL = isDev ? '/api/proxy' : process.env.NEXT_PUBLIC_AI_API_URL
+// Always use local proxy to avoid CORS and inject auth headers
+const baseURL = '/api/proxy'
 
 export const apiClient = axios.create({
     baseURL,
@@ -11,18 +10,4 @@ export const apiClient = axios.create({
     headers: {     
         'Content-Type': 'application/json',
     },
-})
-
-// Add app_code to every request (for production, or if not using proxy)
-apiClient.interceptors.request.use((config) => {
-    if (!isDev) {
-        const appCode = process.env.NEXT_PUBLIC_APP_CODE
-        if (appCode) {
-            config.params = {
-                ...config.params,
-                app_code: appCode,
-            }
-        }
-    }
-    return config
 })
